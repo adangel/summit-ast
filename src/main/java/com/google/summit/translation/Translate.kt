@@ -925,8 +925,10 @@ class Translate(val file: String, private val tokens: TokenStream) : ApexParserB
       ctx.IntegerLiteral(),
       ctx.LongLiteral(),
       ctx.StringLiteral(),
+      ctx.MultilineStringLiteral(),
       ctx.NULL(),
-      ctx.id()
+      ctx.qualifiedName(),
+      ctx.whenLiteral() // inside parenthesis
     )
 
     val loc = toSourceLocation(ctx)
@@ -948,9 +950,14 @@ class Translate(val file: String, private val tokens: TokenStream) : ApexParserB
           LiteralExpression.LongVal(text.replace("[lL]$".toRegex(), "").toLong(), loc)
         ctx.StringLiteral() != null ->
           LiteralExpression.StringVal(text.removeSurrounding("'", "'"), loc)
+        ctx.MultilineStringLiteral() != null ->
+          LiteralExpression.StringVal(text.removeSurrounding("'''", "'''"), loc)
         ctx.NULL() != null -> LiteralExpression.NullVal(loc)
         // An identifier is an enum value
-        ctx.id() != null -> VariableExpression(visitId(ctx.id()), loc)
+        ctx.qualifiedName() != null ->
+          VariableExpression(visitQualifiedName(ctx.qualifiedName()), loc)
+        ctx.whenLiteral() != null ->
+          visitWhenLiteral(ctx.whenLiteral())
         else -> throw TranslationException(ctx, "Unreachable case reached")
       }
     } catch (e: NumberFormatException) {
@@ -1543,7 +1550,27 @@ class Translate(val file: String, private val tokens: TokenStream) : ApexParserB
 
   /** Translates the 'whereClause' grammar rule and returns a [SoqlFragment]. */
   override fun visitWhereClause(ctx: ApexParser.WhereClauseContext) =
-    visitLogicalExpression(ctx.logicalExpression())
+    visitWhereLogicalExpression(ctx.whereLogicalExpression())
+
+  override fun visitWhereLogicalExpression(ctx: ApexParser.WhereLogicalExpressionContext): SoqlFragment =
+    SoqlFragment.mergeOf(
+      ctx.whereConditionalExpression().map { visitWhereConditionalExpression(it) }
+    )
+
+  override fun visitWhereConditionalExpression(ctx: ApexParser.WhereConditionalExpressionContext) =
+    SoqlFragment.mergeOf(
+      ctx.whereLogicalExpression()?.let { visitWhereLogicalExpression(it) },
+      ctx.whereFieldExpression()?.let { visitWhereFieldExpression(it) },
+    )
+
+  override fun visitWhereFieldExpression(ctx: ApexParser.WhereFieldExpressionContext) =
+    SoqlFragment.mergeOf(
+      ctx.fieldExpression()?.let { visitFieldExpression(it) },
+      ctx.comparisonOperator()?.let { visitComparisonOperator(it) },
+    )
+
+  override fun visitComparisonOperator(ctx: ApexParser.ComparisonOperatorContext?) =
+    SoqlFragment.withNoBindings()
 
   /** Translates the 'logicalExpression' grammar rule and returns a [SoqlFragment]. */
   override fun visitLogicalExpression(ctx: ApexParser.LogicalExpressionContext): SoqlFragment =
@@ -1603,10 +1630,18 @@ class Translate(val file: String, private val tokens: TokenStream) : ApexParserB
 
   /** Translates the 'groupByClause' grammar rule and returns a [SoqlFragment]. */
   override fun visitGroupByClause(ctx: ApexParser.GroupByClauseContext) = SoqlFragment.mergeOf(
-    ctx.selectList()?.let { visitSelectList(it) },
+    ctx.fieldGroupByList()?.let { visitFieldGroupByList(it) },
     ctx.logicalExpression()?.let { visitLogicalExpression(it) },
-    *ctx.fieldName().map { visitFieldName(it) }.toTypedArray(),
   )
+
+  override fun visitFieldGroupByList(ctx: ApexParser.FieldGroupByListContext) =
+    SoqlFragment.mergeOf(ctx.fieldGroupBy().map { visitFieldGroupBy(it) })
+
+  override fun visitFieldGroupBy(ctx: ApexParser.FieldGroupByContext) =
+    SoqlFragment.mergeOf(
+      ctx.fieldName()?.let { visitFieldName(it) },
+      ctx.soqlFunction()?.let { visitSoqlFunction(it) },
+    )
 
   /** Translates the 'orderByClause' grammar rule and returns a [SoqlFragment] with no bindings. */
   override fun visitOrderByClause(ctx: ApexParser.OrderByClauseContext) =
