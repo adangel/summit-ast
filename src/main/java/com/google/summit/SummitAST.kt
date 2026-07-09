@@ -20,7 +20,6 @@ import com.google.summit.ast.CompilationUnit
 import com.google.summit.translation.Translate
 import io.github.apexdevtools.apexparser.ApexLexer
 import io.github.apexdevtools.apexparser.ApexParser
-import io.github.apexdevtools.apexparser.CaseInsensitiveInputStream
 import org.antlr.v4.runtime.*
 import java.nio.file.Files
 import java.nio.file.Path
@@ -127,7 +126,7 @@ object SummitAST {
   ): CompilationUnit? {
     // Apex is a case-insensitive language and the grammar is
     // defined to operate on fully lower-cased inputs.
-    val lexer = ApexLexer(CaseInsensitiveInputStream(charStream))
+    val lexer = ApexLexer(charStream)
     val tokens = CommonTokenStream(lexer)
     val parser = ApexParser(tokens)
 
@@ -168,7 +167,7 @@ object SummitAST {
    */
   private fun determineCompilationType(charStream: CharStream): CompilationType {
     fun findType(): CompilationType? {
-      val lexer = ApexLexer(CaseInsensitiveInputStream(charStream))
+      val lexer = ApexLexer(charStream)
       lexer.removeErrorListeners()
 
       // Discard tokens inside body of declaration

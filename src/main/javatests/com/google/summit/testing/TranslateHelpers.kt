@@ -25,7 +25,6 @@ import com.google.summit.ast.traversal.DfsWalker
 import com.google.summit.translation.Translate
 import io.github.apexdevtools.apexparser.ApexLexer
 import io.github.apexdevtools.apexparser.ApexParser
-import io.github.apexdevtools.apexparser.CaseInsensitiveInputStream
 import org.antlr.v4.runtime.BaseErrorListener
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
@@ -62,7 +61,7 @@ object TranslateHelpers {
    * @throw Translate.TranslationException when translation fails
    */
   fun parseAndTranslateWithExceptions(input: String): CompilationUnit {
-    val lexer = ApexLexer(CaseInsensitiveInputStream(CharStreams.fromString(input)))
+    val lexer = ApexLexer(CharStreams.fromString(input))
     lexer.addErrorListener(FailOnErrorListener)
     val tokens = CommonTokenStream(lexer)
     val parser = ApexParser(tokens)
@@ -132,7 +131,7 @@ object TranslateHelpers {
    */
   fun parseAndTranslateStatement(input: String): Statement {
     try {
-      val lexer = ApexLexer(CaseInsensitiveInputStream(CharStreams.fromString(input)))
+      val lexer = ApexLexer(CharStreams.fromString(input))
       lexer.addErrorListener(FailOnErrorListener)
       val tokens = CommonTokenStream(lexer)
       val parser = ApexParser(tokens)
