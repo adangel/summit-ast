@@ -90,7 +90,7 @@ maven_install(
         "com.google.flogger:flogger-system-backend:0.8",
         "junit:junit:4.13.2",
         "io.github.apex-dev-tools:apex-parser:4.4.0",
-        "com.google.truth:truth:1.4.2",
+        "com.google.truth:truth:1.4.5",
         "com.google.code.gson:gson:2.11.0",
         "org.jetbrains.kotlin:kotlin-reflect:2.0.0",
         # Unofficial version to reference in Maven dependencies
