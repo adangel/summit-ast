@@ -84,7 +84,7 @@ workspace_refs(
 
 maven_install(
     artifacts = [
-        "org.apache.commons:commons-lang3:3.14.0",
+        "org.apache.commons:commons-lang3:3.20.0",
         "com.google.flogger:flogger:0.9",
         "com.google.guava:guava:33.2.1-jre",
         "com.google.flogger:flogger-system-backend:0.9",
