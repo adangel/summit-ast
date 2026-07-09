@@ -94,7 +94,7 @@ maven_install(
         "com.google.code.gson:gson:2.14.0",
         "org.jetbrains.kotlin:kotlin-reflect:2.0.0",
         # Unofficial version to reference in Maven dependencies
-        "org.danilopianini:gson-extras:1.3.0",
+        "org.danilopianini:gson-extras:3.3.0",
     ] + maven_artifacts_with_versions,
     repositories = [
         "https://repo1.maven.org/maven2",
