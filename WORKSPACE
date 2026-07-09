@@ -91,7 +91,7 @@ maven_install(
         "junit:junit:4.13.2",
         "io.github.apex-dev-tools:apex-parser:4.4.0",
         "com.google.truth:truth:1.4.2",
-        "com.google.code.gson:gson:2.11.0",
+        "com.google.code.gson:gson:2.14.0",
         "org.jetbrains.kotlin:kotlin-reflect:2.0.0",
         # Unofficial version to reference in Maven dependencies
         "org.danilopianini:gson-extras:1.3.0",
