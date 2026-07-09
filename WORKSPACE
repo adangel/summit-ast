@@ -84,17 +84,17 @@ workspace_refs(
 
 maven_install(
     artifacts = [
-        "org.apache.commons:commons-lang3:3.14.0",
-        "com.google.flogger:flogger:0.8",
-        "com.google.guava:guava:33.2.1-jre",
-        "com.google.flogger:flogger-system-backend:0.8",
+        "org.apache.commons:commons-lang3:3.20.0",
+        "com.google.flogger:flogger:0.9",
+        "com.google.guava:guava:33.6.0-jre",
+        "com.google.flogger:flogger-system-backend:0.9",
         "junit:junit:4.13.2",
         "io.github.apex-dev-tools:apex-parser:5.1.0",
-        "com.google.truth:truth:1.4.2",
-        "com.google.code.gson:gson:2.11.0",
+        "com.google.truth:truth:1.4.5",
+        "com.google.code.gson:gson:2.14.0",
         "org.jetbrains.kotlin:kotlin-reflect:2.0.0",
         # Unofficial version to reference in Maven dependencies
-        "org.danilopianini:gson-extras:1.3.0",
+        "org.danilopianini:gson-extras:3.3.0",
     ] + maven_artifacts_with_versions,
     repositories = [
         "https://repo1.maven.org/maven2",

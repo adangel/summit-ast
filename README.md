@@ -8,6 +8,18 @@ representation.
 
 This is not an official Google product.
 
+Original repository (now archived): https://github.com/google/summit-ast
+
+Maven coordinates (from version 3.0.0+):
+
+```
+<dependency>
+    <groupId>com.github.adangel</groupId>
+    <artifactId>summit-ast</artifactId>
+    <version>3.0.0</version>
+</dependency>
+```
+
 ## Dependencies
 
 This is built on top of the
