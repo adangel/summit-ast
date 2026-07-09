@@ -86,7 +86,7 @@ maven_install(
     artifacts = [
         "org.apache.commons:commons-lang3:3.14.0",
         "com.google.flogger:flogger:0.8",
-        "com.google.guava:guava:33.2.1-jre",
+        "com.google.guava:guava:33.6.0-jre",
         "com.google.flogger:flogger-system-backend:0.8",
         "junit:junit:4.13.2",
         "io.github.apex-dev-tools:apex-parser:4.4.0",
