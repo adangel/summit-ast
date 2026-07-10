@@ -18,8 +18,9 @@ package com.google.summit
 
 import com.google.summit.ast.CompilationUnit
 import com.google.summit.translation.Translate
+import io.github.apexdevtools.apexparser.ApexErrorListener
 import io.github.apexdevtools.apexparser.ApexLexer
-import io.github.apexdevtools.apexparser.ApexParser
+import io.github.apexdevtools.apexparser.ApexParserFactory
 import org.antlr.v4.runtime.*
 import java.nio.file.Files
 import java.nio.file.Path
@@ -34,20 +35,13 @@ object SummitAST {
   private const val STRING_INPUT = "<str>"
 
   /** Listener for syntax errors that keeps a total count. */
-  private class SyntaxErrorListener : BaseErrorListener() {
+  private class SyntaxErrorListener : ApexErrorListener() {
     var numErrors = 0
     var errors = ArrayList<String>()
 
-    override fun syntaxError(
-      recognizer: Recognizer<*, *>,
-      offendingSymbol: Any?,
-      line: Int,
-      charPositionInLine: Int,
-      msg: String,
-      e: RecognitionException?
-    ) {
+    override fun apexSyntaxError(line: Int, column: Int, msg: String?) {
       this.numErrors += 1
-      errors.add("Syntax error at $line:$charPositionInLine: $msg")
+      errors.add("Syntax error at $line:$column: $msg")
     }
 
     fun errorMessages() : String = errors.joinToString("\n")
@@ -123,24 +117,16 @@ object SummitAST {
     name: String,
     type: CompilationType?,
     charStream: CharStream
-  ): CompilationUnit? {
-    // Apex is a case-insensitive language and the grammar is
-    // defined to operate on fully lower-cased inputs.
-    val lexer = ApexLexer(charStream)
-    val tokens = CommonTokenStream(lexer)
-    val parser = ApexParser(tokens)
-
+  ): CompilationUnit {
     val errorCounter = SyntaxErrorListener()
-    lexer.removeErrorListeners()
-    lexer.addErrorListener(errorCounter)
-    parser.removeErrorListeners()
-    parser.addErrorListener(errorCounter)
+    val lexerAndParser = ApexParserFactory.createLexerAndParser(charStream, errorCounter)
+    val tokens = lexerAndParser.parser.tokenStream
 
     // Do parse as complete compilation unit
     val tree =
       when (type ?: determineCompilationType(charStream)) {
-        CompilationType.CLASS -> parser.compilationUnit()
-        CompilationType.TRIGGER -> parser.triggerUnit()
+        CompilationType.CLASS -> lexerAndParser.parser.compilationUnit()
+        CompilationType.TRIGGER -> lexerAndParser.parser.triggerUnit()
       }
 
     if (errorCounter.numErrors > 0) {
