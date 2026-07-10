@@ -57,7 +57,7 @@ object TranslateHelpers {
       return Translate("<trigger input>", tokens).translate(lexerAndParser.parser.triggerUnit())
     } else if ("compilationUnit" == rootType) {
       return Translate("<cls input>", tokens).translate(lexerAndParser.parser.compilationUnit())
-    } else if ("anonymousUnit" == rootType) {
+    } else if ("anonymousBlock" == rootType) {
       return Translate("<anon input>", tokens).translate(lexerAndParser.parser.anonymousUnit())
     } else {
       throw RuntimeException("unsupported rootType: $rootType")

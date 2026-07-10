@@ -1,0 +1,238 @@
+{
+  "anonymousUnit": {
+    "body": [
+      {
+        "type": {
+          "components": [
+            {
+              "id": {
+                "string": "Integer",
+                "sourceLocation": {
+                  "startLine": 5,
+                  "startColumn": 0,
+                  "endLine": 5,
+                  "endColumn": 7
+                }
+              },
+              "args": []
+            }
+          ],
+          "arrayNesting": 0
+        },
+        "declarations": [
+          {
+            "initializer": {
+              "@type": "IntegerVal",
+              "value": 0,
+              "sourceLocation": {
+                "startLine": 5,
+                "startColumn": 15,
+                "endLine": 5,
+                "endColumn": 16
+              }
+            },
+            "id": {
+              "string": "int1",
+              "sourceLocation": {
+                "startLine": 5,
+                "startColumn": 8,
+                "endLine": 5,
+                "endColumn": 12
+              }
+            },
+            "sourceLocation": {
+              "startLine": 5,
+              "startColumn": 8,
+              "endLine": 5,
+              "endColumn": 16
+            }
+          }
+        ],
+        "modifiers": [],
+        "sourceLocation": {
+          "startLine": 5,
+          "startColumn": 0,
+          "endLine": 5,
+          "endColumn": 17
+        }
+      },
+      {
+        "returnType": {
+          "components": [],
+          "arrayNesting": 0
+        },
+        "parameterDeclarations": [],
+        "body": {
+          "statements": [
+            {
+              "@type": "ExpressionStatement",
+              "expression": {
+                "@type": "CallExpression",
+                "id": {
+                  "string": "myProcedure2",
+                  "sourceLocation": {
+                    "startLine": 8,
+                    "startColumn": 4,
+                    "endLine": 8,
+                    "endColumn": 16
+                  }
+                },
+                "args": [],
+                "isSafe": false,
+                "sourceLocation": {
+                  "startLine": 8,
+                  "startColumn": 4,
+                  "endLine": 8,
+                  "endColumn": 18
+                }
+              },
+              "sourceLocation": {
+                "startLine": 8,
+                "startColumn": 4,
+                "endLine": 8,
+                "endColumn": 19
+              }
+            }
+          ],
+          "scoping": "SCOPE_BOUNDARY",
+          "sourceLocation": {
+            "startLine": 7,
+            "startColumn": 20,
+            "endLine": 9,
+            "endColumn": 1
+          }
+        },
+        "isConstructor": false,
+        "modifiers": [],
+        "id": {
+          "string": "myProcedure1",
+          "sourceLocation": {
+            "startLine": 7,
+            "startColumn": 5,
+            "endLine": 7,
+            "endColumn": 17
+          }
+        },
+        "sourceLocation": {
+          "startLine": 7,
+          "startColumn": 0,
+          "endLine": 9,
+          "endColumn": 1
+        }
+      },
+      {
+        "returnType": {
+          "components": [],
+          "arrayNesting": 0
+        },
+        "parameterDeclarations": [],
+        "body": {
+          "statements": [
+            {
+              "@type": "ExpressionStatement",
+              "expression": {
+                "@type": "UnaryExpression",
+                "value": {
+                  "@type": "VariableExpression",
+                  "id": {
+                    "string": "int1",
+                    "sourceLocation": {
+                      "startLine": 12,
+                      "startColumn": 4,
+                      "endLine": 12,
+                      "endColumn": 8
+                    }
+                  },
+                  "sourceLocation": {
+                    "startLine": 12,
+                    "startColumn": 4,
+                    "endLine": 12,
+                    "endColumn": 8
+                  }
+                },
+                "op": "POST_INCREMENT",
+                "sourceLocation": {
+                  "startLine": 12,
+                  "startColumn": 4,
+                  "endLine": 12,
+                  "endColumn": 10
+                }
+              },
+              "sourceLocation": {
+                "startLine": 12,
+                "startColumn": 4,
+                "endLine": 12,
+                "endColumn": 11
+              }
+            }
+          ],
+          "scoping": "SCOPE_BOUNDARY",
+          "sourceLocation": {
+            "startLine": 11,
+            "startColumn": 20,
+            "endLine": 13,
+            "endColumn": 1
+          }
+        },
+        "isConstructor": false,
+        "modifiers": [],
+        "id": {
+          "string": "myProcedure2",
+          "sourceLocation": {
+            "startLine": 11,
+            "startColumn": 5,
+            "endLine": 11,
+            "endColumn": 17
+          }
+        },
+        "sourceLocation": {
+          "startLine": 11,
+          "startColumn": 0,
+          "endLine": 13,
+          "endColumn": 1
+        }
+      },
+      {
+        "expression": {
+          "@type": "CallExpression",
+          "id": {
+            "string": "myProcedure1",
+            "sourceLocation": {
+              "startLine": 15,
+              "startColumn": 0,
+              "endLine": 15,
+              "endColumn": 12
+            }
+          },
+          "args": [],
+          "isSafe": false,
+          "sourceLocation": {
+            "startLine": 15,
+            "startColumn": 0,
+            "endLine": 15,
+            "endColumn": 14
+          }
+        },
+        "sourceLocation": {
+          "startLine": 15,
+          "startColumn": 0,
+          "endLine": 15,
+          "endColumn": 15
+        }
+      }
+    ],
+    "sourceLocation": {
+      "startLine": 5,
+      "startColumn": 0,
+      "endLine": 15,
+      "endColumn": 15
+    }
+  },
+  "file": "<anon input>",
+  "sourceLocation": {
+    "startLine": 5,
+    "startColumn": 0,
+    "endLine": 16,
+    "endColumn": 0
+  }
+}

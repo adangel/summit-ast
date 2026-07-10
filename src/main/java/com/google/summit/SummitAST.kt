@@ -57,7 +57,8 @@ object SummitAST {
   /** The type of top-level declaration in an input. */
   enum class CompilationType {
     CLASS,
-    TRIGGER
+    TRIGGER,
+    ANONYMOUS_BLOCK
   }
 
   /**
@@ -72,6 +73,7 @@ object SummitAST {
         when {
           isApexClassFile(path) -> CompilationType.CLASS
           isApexTriggerFile(path) -> CompilationType.TRIGGER
+          isApexAnonymousBlockFile(path) -> CompilationType.ANONYMOUS_BLOCK
           else -> throw IllegalArgumentException("Unexpected file type")
         },
       charStream = CharStreams.fromPath(path),
@@ -127,6 +129,7 @@ object SummitAST {
       when (type ?: determineCompilationType(charStream)) {
         CompilationType.CLASS -> lexerAndParser.parser.compilationUnit()
         CompilationType.TRIGGER -> lexerAndParser.parser.triggerUnit()
+        CompilationType.ANONYMOUS_BLOCK -> lexerAndParser.parser.anonymousUnit()
       }
 
     if (errorCounter.numErrors > 0) {
@@ -146,7 +149,7 @@ object SummitAST {
    * Determines the [CompilationType] of [charStream].
    *
    * If `class` or `trigger` is found before the body of the top-level declaration, the
-   * corresponding [CompilationType] is returned. Otherwise, [CompilationType.CLASS] is returned by
+   * corresponding [CompilationType] is returned. Otherwise, [CompilationType.ANONYMOUS_BLOCK] is returned by
    * default.
    *
    * After execution, the input cursor of the [charStream] is reset to index 0.
@@ -182,8 +185,8 @@ object SummitAST {
     // Reset `charStream` back to start
     charStream.seek(0)
 
-    // Interpret as class by default
-    return type ?: CompilationType.CLASS
+    // Interpret as anonymous unit by default
+    return type ?: CompilationType.ANONYMOUS_BLOCK
   }
 
   /**
@@ -199,6 +202,13 @@ object SummitAST {
    */
   private fun isApexTriggerFile(path: Path): Boolean =
     Files.isRegularFile(path) && path.toString().lowercase().endsWith(".trigger")
+
+  /**
+   * Returns `true` if the path is an Apex code file. These are regular files with the
+   * (case-insensitive) suffix `.apex`.
+   */
+  private fun isApexAnonymousBlockFile(path: Path): Boolean =
+    Files.isRegularFile(path) && path.toString().lowercase().endsWith(".apex")
 
   /** Returns `true` if the path is an Apex source file: either a class or a trigger. */
   fun isApexSourceFile(path: Path): Boolean = isApexClassFile(path) || isApexTriggerFile(path)

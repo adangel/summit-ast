@@ -18,6 +18,8 @@ package com.google.summit
 
 import com.google.common.truth.Truth.assertThat
 import com.google.summit.SummitAST.CompilationType
+import com.google.summit.ast.declaration.InterfaceDeclaration
+import com.google.summit.ast.declaration.TriggerDeclaration
 import org.junit.Assert
 import kotlin.io.path.Path
 import org.junit.Test
@@ -48,6 +50,9 @@ class SummitASTTest {
     val string = classString
     val cu = SummitAST.parseAndTranslate(string, type = null)
     assertThat(cu).isNotNull()
+    assertThat(cu.anonymousUnit).isNull()
+    assertThat(cu.typeDeclaration).isNotNull()
+    assertThat(cu.typeDeclaration).isInstanceOf(InterfaceDeclaration::class.java)
   }
 
   @Test
@@ -62,6 +67,9 @@ class SummitASTTest {
     val string = triggerString
     val cu = SummitAST.parseAndTranslate(string, type = null)
     assertThat(cu).isNotNull()
+    assertThat(cu.anonymousUnit).isNull()
+    assertThat(cu.typeDeclaration).isNotNull()
+    assertThat(cu.typeDeclaration).isInstanceOf(TriggerDeclaration::class.java)
   }
 
   @Test
@@ -74,5 +82,33 @@ class SummitASTTest {
       )
     };
     assertThat(exception).isNotNull()
+  }
+
+  @Test
+  fun parseString_valid_explicitAnonymousUnit() {
+    val string = "System.debug('');"
+    val cu = SummitAST.parseAndTranslate(string, type = CompilationType.ANONYMOUS_BLOCK)
+    assertThat(cu).isNotNull()
+    assertThat(cu.anonymousUnit).isNotNull()
+    assertThat(cu.typeDeclaration).isNull()
+  }
+
+  @Test
+  fun parseString_valid_implicitAnonymousUnit() {
+    val string = "System.debug('');"
+    val cu = SummitAST.parseAndTranslate(string, type = null)
+    assertThat(cu).isNotNull()
+    assertThat(cu.anonymousUnit).isNotNull()
+    assertThat(cu.typeDeclaration).isNull()
+  }
+
+  @Test
+  fun parsePath_valid_anonymousBlock() {
+    val path = Path("src/main/javatests/com/google/summit/testdata/AnonymousBlock.apex")
+    val cu = SummitAST.parseAndTranslate(path)
+    assertThat(cu).isNotNull()
+    assertThat(cu.anonymousUnit).isNotNull()
+    assertThat(cu.typeDeclaration).isNull()
+    assertThat(cu.anonymousUnit!!.body).hasSize(4)
   }
 }
