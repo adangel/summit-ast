@@ -78,8 +78,6 @@ object TranslateHelpers {
    * @throw Translate.TranslationException when translation fails
    */
   fun parseAndTranslateWithExceptions(input: String): CompilationUnit {
-    val lexerAndParser = ApexParserFactory.createLexerAndParser(CharStreams.fromString(input), FailOnErrorListener)
-    val tokens = lexerAndParser.parser.tokenStream
     if (input.startsWith("trigger ")) {
       return parseAndTranslateWithExceptions(input, "triggerUnit")
     } else {
