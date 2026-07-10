@@ -63,6 +63,7 @@
                 "first": {
                   "@type": "StringVal",
                   "value": "a",
+                  "multiline": false,
                   "sourceLocation": {
                     "startLine": 1,
                     "startColumn": 56,
@@ -73,6 +74,7 @@
                 "second": {
                   "@type": "StringVal",
                   "value": "b",
+                  "multiline": false,
                   "sourceLocation": {
                     "startLine": 1,
                     "startColumn": 63,
@@ -85,6 +87,7 @@
                 "first": {
                   "@type": "StringVal",
                   "value": "c",
+                  "multiline": false,
                   "sourceLocation": {
                     "startLine": 1,
                     "startColumn": 68,
@@ -97,6 +100,7 @@
                   "receiver": {
                     "@type": "StringVal",
                     "value": "d",
+                    "multiline": false,
                     "sourceLocation": {
                       "startLine": 1,
                       "startColumn": 75,

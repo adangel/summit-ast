@@ -18,6 +18,10 @@ public class Main implements I, J {
       integer i = new float[5] ? [SELECT COUNT() FROM Account] : false;
       Map<String, String> MyStrings = new Map<String, String>{'a' => 'b', 'c' => 'd'.toUpperCase()};
       update this.i;
+      String multi = '''
+          Line 1
+          Line 2
+      ''';
       if(true) { 5; }
       return sum[0].bar * new Object.x(a=1, b=2);
     } catch (Exception e) { throw e; }

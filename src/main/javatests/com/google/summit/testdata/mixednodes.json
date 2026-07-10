@@ -533,25 +533,25 @@
                         "id": {
                           "string": "e",
                           "sourceLocation": {
-                            "startLine": 23,
+                            "startLine": 27,
                             "startColumn": 23,
-                            "endLine": 23,
+                            "endLine": 27,
                             "endColumn": 24
                           }
                         },
                         "sourceLocation": {
-                          "startLine": 23,
+                          "startLine": 27,
                           "startColumn": 23,
-                          "endLine": 23,
+                          "endLine": 27,
                           "endColumn": 24
                         }
                       }
                     ],
                     "modifiers": [],
                     "sourceLocation": {
-                      "startLine": 23,
+                      "startLine": 27,
                       "startColumn": 23,
-                      "endLine": 23,
+                      "endLine": 27,
                       "endColumn": 24
                     }
                   },
@@ -565,39 +565,39 @@
                           "id": {
                             "string": "e",
                             "sourceLocation": {
-                              "startLine": 23,
+                              "startLine": 27,
                               "startColumn": 34,
-                              "endLine": 23,
+                              "endLine": 27,
                               "endColumn": 35
                             }
                           },
                           "sourceLocation": {
-                            "startLine": 23,
+                            "startLine": 27,
                             "startColumn": 34,
-                            "endLine": 23,
+                            "endLine": 27,
                             "endColumn": 35
                           }
                         },
                         "sourceLocation": {
-                          "startLine": 23,
+                          "startLine": 27,
                           "startColumn": 28,
-                          "endLine": 23,
+                          "endLine": 27,
                           "endColumn": 36
                         }
                       }
                     ],
                     "scoping": "SCOPE_BOUNDARY",
                     "sourceLocation": {
-                      "startLine": 23,
+                      "startLine": 27,
                       "startColumn": 26,
-                      "endLine": 23,
+                      "endLine": 27,
                       "endColumn": 38
                     }
                   },
                   "sourceLocation": {
-                    "startLine": 23,
+                    "startLine": 27,
                     "startColumn": 6,
-                    "endLine": 23,
+                    "endLine": 27,
                     "endColumn": 38
                   }
                 }
@@ -987,6 +987,7 @@
                                   "first": {
                                     "@type": "StringVal",
                                     "value": "a",
+                                    "multiline": false,
                                     "sourceLocation": {
                                       "startLine": 19,
                                       "startColumn": 62,
@@ -997,6 +998,7 @@
                                   "second": {
                                     "@type": "StringVal",
                                     "value": "b",
+                                    "multiline": false,
                                     "sourceLocation": {
                                       "startLine": 19,
                                       "startColumn": 69,
@@ -1009,6 +1011,7 @@
                                   "first": {
                                     "@type": "StringVal",
                                     "value": "c",
+                                    "multiline": false,
                                     "sourceLocation": {
                                       "startLine": 19,
                                       "startColumn": 74,
@@ -1021,6 +1024,7 @@
                                     "receiver": {
                                       "@type": "StringVal",
                                       "value": "d",
+                                      "multiline": false,
                                       "sourceLocation": {
                                         "startLine": 19,
                                         "startColumn": 81,
@@ -1184,14 +1188,79 @@
                     }
                   },
                   {
+                    "@type": "VariableDeclarationStatement",
+                    "group": {
+                      "type": {
+                        "components": [
+                          {
+                            "id": {
+                              "string": "String",
+                              "sourceLocation": {
+                                "startLine": 21,
+                                "startColumn": 6,
+                                "endLine": 21,
+                                "endColumn": 12
+                              }
+                            },
+                            "args": []
+                          }
+                        ],
+                        "arrayNesting": 0
+                      },
+                      "declarations": [
+                        {
+                          "initializer": {
+                            "@type": "StringVal",
+                            "value": "          Line 1\n          Line 2\n      ",
+                            "multiline": true,
+                            "sourceLocation": {
+                              "startLine": 21,
+                              "startColumn": 21,
+                              "endLine": 24,
+                              "endColumn": 9
+                            }
+                          },
+                          "id": {
+                            "string": "multi",
+                            "sourceLocation": {
+                              "startLine": 21,
+                              "startColumn": 13,
+                              "endLine": 21,
+                              "endColumn": 18
+                            }
+                          },
+                          "sourceLocation": {
+                            "startLine": 21,
+                            "startColumn": 13,
+                            "endLine": 24,
+                            "endColumn": 9
+                          }
+                        }
+                      ],
+                      "modifiers": [],
+                      "sourceLocation": {
+                        "startLine": 21,
+                        "startColumn": 6,
+                        "endLine": 24,
+                        "endColumn": 9
+                      }
+                    },
+                    "sourceLocation": {
+                      "startLine": 21,
+                      "startColumn": 6,
+                      "endLine": 24,
+                      "endColumn": 10
+                    }
+                  },
+                  {
                     "@type": "IfStatement",
                     "condition": {
                       "@type": "BooleanVal",
                       "value": true,
                       "sourceLocation": {
-                        "startLine": 21,
+                        "startLine": 25,
                         "startColumn": 9,
-                        "endLine": 21,
+                        "endLine": 25,
                         "endColumn": 13
                       }
                     },
@@ -1204,32 +1273,32 @@
                             "@type": "IntegerVal",
                             "value": 5,
                             "sourceLocation": {
-                              "startLine": 21,
+                              "startLine": 25,
                               "startColumn": 17,
-                              "endLine": 21,
+                              "endLine": 25,
                               "endColumn": 18
                             }
                           },
                           "sourceLocation": {
-                            "startLine": 21,
+                            "startLine": 25,
                             "startColumn": 17,
-                            "endLine": 21,
+                            "endLine": 25,
                             "endColumn": 19
                           }
                         }
                       ],
                       "scoping": "SCOPE_BOUNDARY",
                       "sourceLocation": {
-                        "startLine": 21,
+                        "startLine": 25,
                         "startColumn": 15,
-                        "endLine": 21,
+                        "endLine": 25,
                         "endColumn": 21
                       }
                     },
                     "sourceLocation": {
-                      "startLine": 21,
+                      "startLine": 25,
                       "startColumn": 6,
-                      "endLine": 21,
+                      "endLine": 25,
                       "endColumn": 21
                     }
                   },
@@ -1246,16 +1315,16 @@
                             "id": {
                               "string": "sum",
                               "sourceLocation": {
-                                "startLine": 22,
+                                "startLine": 26,
                                 "startColumn": 13,
-                                "endLine": 22,
+                                "endLine": 26,
                                 "endColumn": 16
                               }
                             },
                             "sourceLocation": {
-                              "startLine": 22,
+                              "startLine": 26,
                               "startColumn": 13,
-                              "endLine": 22,
+                              "endLine": 26,
                               "endColumn": 16
                             }
                           },
@@ -1263,33 +1332,33 @@
                             "@type": "IntegerVal",
                             "value": 0,
                             "sourceLocation": {
-                              "startLine": 22,
+                              "startLine": 26,
                               "startColumn": 17,
-                              "endLine": 22,
+                              "endLine": 26,
                               "endColumn": 18
                             }
                           },
                           "sourceLocation": {
-                            "startLine": 22,
+                            "startLine": 26,
                             "startColumn": 13,
-                            "endLine": 22,
+                            "endLine": 26,
                             "endColumn": 19
                           }
                         },
                         "field": {
                           "string": "bar",
                           "sourceLocation": {
-                            "startLine": 22,
+                            "startLine": 26,
                             "startColumn": 20,
-                            "endLine": 22,
+                            "endLine": 26,
                             "endColumn": 23
                           }
                         },
                         "isSafe": false,
                         "sourceLocation": {
-                          "startLine": 22,
+                          "startLine": 26,
                           "startColumn": 13,
-                          "endLine": 22,
+                          "endLine": 26,
                           "endColumn": 23
                         }
                       },
@@ -1306,16 +1375,16 @@
                                 "id": {
                                   "string": "a",
                                   "sourceLocation": {
-                                    "startLine": 22,
+                                    "startLine": 26,
                                     "startColumn": 39,
-                                    "endLine": 22,
+                                    "endLine": 26,
                                     "endColumn": 40
                                   }
                                 },
                                 "sourceLocation": {
-                                  "startLine": 22,
+                                  "startLine": 26,
                                   "startColumn": 39,
-                                  "endLine": 22,
+                                  "endLine": 26,
                                   "endColumn": 40
                                 }
                               },
@@ -1323,16 +1392,16 @@
                                 "@type": "IntegerVal",
                                 "value": 1,
                                 "sourceLocation": {
-                                  "startLine": 22,
+                                  "startLine": 26,
                                   "startColumn": 41,
-                                  "endLine": 22,
+                                  "endLine": 26,
                                   "endColumn": 42
                                 }
                               },
                               "sourceLocation": {
-                                "startLine": 22,
+                                "startLine": 26,
                                 "startColumn": 39,
-                                "endLine": 22,
+                                "endLine": 26,
                                 "endColumn": 42
                               }
                             },
@@ -1343,16 +1412,16 @@
                                 "id": {
                                   "string": "b",
                                   "sourceLocation": {
-                                    "startLine": 22,
+                                    "startLine": 26,
                                     "startColumn": 44,
-                                    "endLine": 22,
+                                    "endLine": 26,
                                     "endColumn": 45
                                   }
                                 },
                                 "sourceLocation": {
-                                  "startLine": 22,
+                                  "startLine": 26,
                                   "startColumn": 44,
-                                  "endLine": 22,
+                                  "endLine": 26,
                                   "endColumn": 45
                                 }
                               },
@@ -1360,16 +1429,16 @@
                                 "@type": "IntegerVal",
                                 "value": 2,
                                 "sourceLocation": {
-                                  "startLine": 22,
+                                  "startLine": 26,
                                   "startColumn": 46,
-                                  "endLine": 22,
+                                  "endLine": 26,
                                   "endColumn": 47
                                 }
                               },
                               "sourceLocation": {
-                                "startLine": 22,
+                                "startLine": 26,
                                 "startColumn": 44,
-                                "endLine": 22,
+                                "endLine": 26,
                                 "endColumn": 47
                               }
                             }
@@ -1380,9 +1449,9 @@
                                 "id": {
                                   "string": "Object",
                                   "sourceLocation": {
-                                    "startLine": 22,
+                                    "startLine": 26,
                                     "startColumn": 30,
-                                    "endLine": 22,
+                                    "endLine": 26,
                                     "endColumn": 36
                                   }
                                 },
@@ -1392,9 +1461,9 @@
                                 "id": {
                                   "string": "x",
                                   "sourceLocation": {
-                                    "startLine": 22,
+                                    "startLine": 26,
                                     "startColumn": 37,
-                                    "endLine": 22,
+                                    "endLine": 26,
                                     "endColumn": 38
                                   }
                                 },
@@ -1404,30 +1473,30 @@
                             "arrayNesting": 0
                           },
                           "sourceLocation": {
-                            "startLine": 22,
+                            "startLine": 26,
                             "startColumn": 30,
-                            "endLine": 22,
+                            "endLine": 26,
                             "endColumn": 48
                           }
                         },
                         "sourceLocation": {
-                          "startLine": 22,
+                          "startLine": 26,
                           "startColumn": 26,
-                          "endLine": 22,
+                          "endLine": 26,
                           "endColumn": 48
                         }
                       },
                       "sourceLocation": {
-                        "startLine": 22,
+                        "startLine": 26,
                         "startColumn": 13,
-                        "endLine": 22,
+                        "endLine": 26,
                         "endColumn": 48
                       }
                     },
                     "sourceLocation": {
-                      "startLine": 22,
+                      "startLine": 26,
                       "startColumn": 6,
-                      "endLine": 22,
+                      "endLine": 26,
                       "endColumn": 49
                     }
                   }
@@ -1436,14 +1505,14 @@
                 "sourceLocation": {
                   "startLine": 15,
                   "startColumn": 8,
-                  "endLine": 23,
+                  "endLine": 27,
                   "endColumn": 5
                 }
               },
               "sourceLocation": {
                 "startLine": 15,
                 "startColumn": 4,
-                "endLine": 23,
+                "endLine": 27,
                 "endColumn": 38
               }
             }
@@ -1452,7 +1521,7 @@
           "sourceLocation": {
             "startLine": 14,
             "startColumn": 33,
-            "endLine": 24,
+            "endLine": 28,
             "endColumn": 3
           }
         },
@@ -1470,7 +1539,7 @@
         "sourceLocation": {
           "startLine": 14,
           "startColumn": 2,
-          "endLine": 24,
+          "endLine": 28,
           "endColumn": 3
         }
       }
@@ -1668,7 +1737,7 @@
     "sourceLocation": {
       "startLine": 4,
       "startColumn": 7,
-      "endLine": 25,
+      "endLine": 29,
       "endColumn": 1
     }
   },
@@ -1676,7 +1745,7 @@
   "sourceLocation": {
     "startLine": 1,
     "startColumn": 0,
-    "endLine": 25,
+    "endLine": 29,
     "endColumn": 1
   }
 }

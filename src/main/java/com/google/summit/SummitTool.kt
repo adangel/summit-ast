@@ -87,7 +87,7 @@ object SummitTool {
             compilationUnit = SummitAST.parseAndTranslate(path)
 
             if (serializer != null) {
-              val json = serializer.serialize(compilationUnit!!)
+              val json = serializer.serialize(compilationUnit)
               val jsonFile = path.resolveSibling(path.fileName.toString() + ".json")
               Files.write(jsonFile, Collections.singleton(json), StandardCharsets.UTF_8)
               logger.atInfo().log("Serialized into %s", jsonFile)

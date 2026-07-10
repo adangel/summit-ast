@@ -23,28 +23,44 @@ import com.google.summit.ast.Untranslated
 import com.google.summit.ast.statement.Statement
 import com.google.summit.ast.traversal.DfsWalker
 import com.google.summit.translation.Translate
-import io.github.apexdevtools.apexparser.ApexLexer
-import io.github.apexdevtools.apexparser.ApexParser
-import io.github.apexdevtools.apexparser.CaseInsensitiveInputStream
-import org.antlr.v4.runtime.BaseErrorListener
+import io.github.apexdevtools.apexparser.ApexErrorListener
+import io.github.apexdevtools.apexparser.ApexParserFactory
 import org.antlr.v4.runtime.CharStreams
-import org.antlr.v4.runtime.CommonTokenStream
-import org.antlr.v4.runtime.RecognitionException
-import org.antlr.v4.runtime.Recognizer
 
 object TranslateHelpers {
 
   /** Listener to fail on parse errors. */
-  object FailOnErrorListener : BaseErrorListener() {
-    override fun syntaxError(
-      recognizer: Recognizer<*, *>?,
-      offendingSymbol: Any?,
-      line: Int,
-      charPositionInLine: Int,
-      msg: String?,
-      e: RecognitionException?
-    ) {
-      assertWithMessage("Parsing failed at $line:$charPositionInLine. Reason: '$msg'").fail()
+  object FailOnErrorListener : ApexErrorListener() {
+    override fun apexSyntaxError(line: Int, column: Int, msg: String?) {
+      assertWithMessage("Parsing failed at $line:$column. Reason: '$msg'").fail()
+    }
+  }
+
+  /**
+   * Parses and translates a source code input string.
+   *
+   * This helper is missing the extra exception logging (in the methods below) which also records
+   * the problematic input text.
+   *
+   * Input strings that begin with `trigger *` will be parsed as if from a *.trigger file. Otherwise
+   * it will be passed as from a *.cls file.
+   *
+   * @param input the source code to parse and translate
+   * @param rootType the type of the root node (triggerUnit, compilationUnit, anonymousUnit)
+   * @return the translated AST for the compilation unit
+   * @throw Translate.TranslationException when translation fails
+   */
+  fun parseAndTranslateWithExceptions(input: String, rootType: String): CompilationUnit {
+    val lexerAndParser = ApexParserFactory.createLexerAndParser(CharStreams.fromString(input), FailOnErrorListener)
+    val tokens = lexerAndParser.parser.tokenStream
+    if ("triggerUnit" == rootType) {
+      return Translate("<trigger input>", tokens).translate(lexerAndParser.parser.triggerUnit())
+    } else if ("compilationUnit" == rootType) {
+      return Translate("<cls input>", tokens).translate(lexerAndParser.parser.compilationUnit())
+    } else if ("anonymousUnit" == rootType) {
+      return Translate("<anon input>", tokens).translate(lexerAndParser.parser.anonymousUnit())
+    } else {
+      throw RuntimeException("unsupported rootType: $rootType")
     }
   }
 
@@ -62,15 +78,10 @@ object TranslateHelpers {
    * @throw Translate.TranslationException when translation fails
    */
   fun parseAndTranslateWithExceptions(input: String): CompilationUnit {
-    val lexer = ApexLexer(CaseInsensitiveInputStream(CharStreams.fromString(input)))
-    lexer.addErrorListener(FailOnErrorListener)
-    val tokens = CommonTokenStream(lexer)
-    val parser = ApexParser(tokens)
-    parser.addErrorListener(FailOnErrorListener)
     if (input.startsWith("trigger ")) {
-      return Translate("<trigger input>", tokens).translate(parser.triggerUnit())
+      return parseAndTranslateWithExceptions(input, "triggerUnit")
     } else {
-      return Translate("<cls input>", tokens).translate(parser.compilationUnit())
+      return parseAndTranslateWithExceptions(input, "compilationUnit")
     }
   }
 
@@ -132,12 +143,9 @@ object TranslateHelpers {
    */
   fun parseAndTranslateStatement(input: String): Statement {
     try {
-      val lexer = ApexLexer(CaseInsensitiveInputStream(CharStreams.fromString(input)))
-      lexer.addErrorListener(FailOnErrorListener)
-      val tokens = CommonTokenStream(lexer)
-      val parser = ApexParser(tokens)
-      parser.addErrorListener(FailOnErrorListener)
-      return Translate("<input>", tokens).visitStatement(parser.statement())
+      val lexerAndParser = ApexParserFactory.createLexerAndParser(CharStreams.fromString(input), FailOnErrorListener)
+      val tokens = lexerAndParser.parser.tokenStream
+      return Translate("<input>", tokens).visitStatement(lexerAndParser.parser.statement())
     } catch (e: Translate.TranslationException) {
       assertWithMessage("Translation failed on %s because %s", e.tree.text, e.message).fail()
       // Exception to log-and-rethrow anti-pattern for syntactic purposes:

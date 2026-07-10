@@ -17,6 +17,12 @@ kt_jvm_library(
 )
 
 kt_jvm_test(
+    name = "AnonymousUnitTest",
+    test_class = "com.google.summit.translation.AnonymousUnitTest",
+    deps = [ ":tests" ],
+)
+
+kt_jvm_test(
     name = "ClassDeclarationTest",
     test_class = "com.google.summit.translation.ClassDeclarationTest",
     deps = [ ":tests" ],

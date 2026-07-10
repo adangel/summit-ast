@@ -170,6 +170,34 @@ class StatementTest {
   }
 
   @Test
+  fun switchStatement_whenClause_fullyQualifiedEnum() {
+    val root = parseApexStatementInCode("""
+      switch on (x) { 
+        when MyEnum.A { return 1; }
+        when MyClass.MyEnum.B { return 2; }
+        when MyEnum.C, MyEnum.D { return 3; }
+      }
+    """.trimIndent())
+    val node = TranslateHelpers.findFirstNodeOfType<SwitchStatement>(root)
+    val values = node!!.whenClauses
+        .filterIsInstance<SwitchStatement.WhenValue>()
+        .map { it.values }
+    assertThat(values[0]).hasSize(1)
+    assertThat(values[0][0]).isInstanceOf(VariableExpression::class.java)
+    assertThat((values[0][0] as VariableExpression).id.string).isEqualTo("MyEnum.A")
+
+    assertThat(values[1]).hasSize(1)
+    assertThat(values[1][0]).isInstanceOf(VariableExpression::class.java)
+    assertThat((values[1][0] as VariableExpression).id.string).isEqualTo("MyClass.MyEnum.B")
+
+    assertThat(values[2]).hasSize(2)
+    assertThat(values[2][0]).isInstanceOf(VariableExpression::class.java)
+    assertThat(values[2][1]).isInstanceOf(VariableExpression::class.java)
+    assertThat((values[2][0] as VariableExpression).id.string).isEqualTo("MyEnum.C")
+    assertThat((values[2][1] as VariableExpression).id.string).isEqualTo("MyEnum.D")
+  }
+
+  @Test
   fun traditionalForStatement_declares_twoVariables() {
     val root = parseApexStatementInCode("for (int i=0, j=0; i+j<10; i++, j++) {}")
     val node = TranslateHelpers.findFirstNodeOfType<ForLoopStatement>(root)

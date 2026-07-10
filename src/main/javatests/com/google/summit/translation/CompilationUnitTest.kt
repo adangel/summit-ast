@@ -40,7 +40,7 @@ class CompilationUnitTest {
   @Test
   fun parent_reverses_getChildren() {
     val cu = TranslateHelpers.parseAndTranslate("class Test { }")
-    val classDecl = cu.typeDeclaration
+    val classDecl = cu.typeDeclaration!!
 
     assertThat(cu.getChildren()).containsExactly(classDecl)
     assertThat(classDecl.parent).isEqualTo(cu)

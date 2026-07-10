@@ -34,7 +34,7 @@ import org.junit.runners.JUnit4
 class ModifierTest {
 
   private fun findAnnotationOnClass(cu: CompilationUnit, name: String): AnnotationModifier? =
-    cu.typeDeclaration.annotationModifiers.find { it.name.asCodeString() == name }
+    cu.typeDeclaration!!.annotationModifiers.find { it.name.asCodeString() == name }
 
   @Test
   fun classDeclaration_translation_hasCorrectAnnotations() {
@@ -78,7 +78,7 @@ class ModifierTest {
       // but they are accepted by the parser and translated.
       val cu = TranslateHelpers.parseAndTranslate("$modifier class Test { }")
 
-      assertThat(cu.typeDeclaration.modifiers).hasSize(1)
+      assertThat(cu.typeDeclaration!!.modifiers).hasSize(1)
     }
   }
 

@@ -35,12 +35,12 @@ class SourceLocationTest {
 
     val cu = TranslateHelpers.parseAndTranslate(input)
 
-    assertThat(cu.typeDeclaration.getSourceLocation())
+    assertThat(cu.typeDeclaration!!.getSourceLocation())
       .isEqualTo(
         // span from start of "class" keyword to end of input
         SourceLocation(1, input.indexOf("class"), 1, input.length)
       )
-    assertThat(cu.typeDeclaration.id.getSourceLocation())
+    assertThat(cu.typeDeclaration!!.id.getSourceLocation())
       .isEqualTo(
         // span from start of "Test" identifier to before open braces
         SourceLocation(1, input.indexOf("Test"), 1, input.indexOf("Test") + "Test".length)
