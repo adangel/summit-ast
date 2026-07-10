@@ -149,4 +149,13 @@ class SoqlAndSoslTest {
     assertThat(varExpressions).hasSize(3)
     assertThat(varExpressions).containsExactly("q", "d", "l")
   }
+
+  @Test
+  fun formulaFunction() {
+    val query = "SELECT Id FROM Account WHERE FORMULA('EndDate - StartDate') > 10"
+    val root = parseSoqlOrSoslInCode(query)
+    val node = TranslateHelpers.findFirstNodeOfType<SoqlExpression>(root)
+    assertThat(node).isNotNull()
+    assertThat(node!!.query).isEqualTo(query)
+  }
 }
