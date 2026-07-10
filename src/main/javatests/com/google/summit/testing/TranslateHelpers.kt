@@ -46,6 +46,34 @@ object TranslateHelpers {
    * it will be passed as from a *.cls file.
    *
    * @param input the source code to parse and translate
+   * @param rootType the type of the root node (triggerUnit, compilationUnit, anonymousUnit)
+   * @return the translated AST for the compilation unit
+   * @throw Translate.TranslationException when translation fails
+   */
+  fun parseAndTranslateWithExceptions(input: String, rootType: String): CompilationUnit {
+    val lexerAndParser = ApexParserFactory.createLexerAndParser(CharStreams.fromString(input), FailOnErrorListener)
+    val tokens = lexerAndParser.parser.tokenStream
+    if ("triggerUnit" == rootType) {
+      return Translate("<trigger input>", tokens).translate(lexerAndParser.parser.triggerUnit())
+    } else if ("compilationUnit" == rootType) {
+      return Translate("<cls input>", tokens).translate(lexerAndParser.parser.compilationUnit())
+    } else if ("anonymousUnit" == rootType) {
+      return Translate("<anon input>", tokens).translate(lexerAndParser.parser.anonymousUnit())
+    } else {
+      throw RuntimeException("unsupported rootType: $rootType")
+    }
+  }
+
+  /**
+   * Parses and translates a source code input string.
+   *
+   * This helper is missing the extra exception logging (in the methods below) which also records
+   * the problematic input text.
+   *
+   * Input strings that begin with `trigger *` will be parsed as if from a *.trigger file. Otherwise
+   * it will be passed as from a *.cls file.
+   *
+   * @param input the source code to parse and translate
    * @return the translated AST for the compilation unit
    * @throw Translate.TranslationException when translation fails
    */
@@ -53,9 +81,9 @@ object TranslateHelpers {
     val lexerAndParser = ApexParserFactory.createLexerAndParser(CharStreams.fromString(input), FailOnErrorListener)
     val tokens = lexerAndParser.parser.tokenStream
     if (input.startsWith("trigger ")) {
-      return Translate("<trigger input>", tokens).translate(lexerAndParser.parser.triggerUnit())
+      return parseAndTranslateWithExceptions(input, "triggerUnit")
     } else {
-      return Translate("<cls input>", tokens).translate(lexerAndParser.parser.compilationUnit())
+      return parseAndTranslateWithExceptions(input, "compilationUnit")
     }
   }
 

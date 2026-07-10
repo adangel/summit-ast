@@ -24,8 +24,39 @@ import com.google.summit.ast.declaration.TypeDeclaration
  * @property typeDeclaration the top-level type declaration
  * @property file path (or other descriptor) that is being translated
  */
-class CompilationUnit(val typeDeclaration: TypeDeclaration, val file: String, loc: SourceLocation) :
-  NodeWithSourceLocation(loc) {
+class CompilationUnit :
+    NodeWithSourceLocation {
 
-  override fun getChildren(): List<Node> = listOf(typeDeclaration)
+    val typeDeclaration: TypeDeclaration?
+    val anonymousUnit: AnonymousUnit?
+    val file: String
+
+    constructor(
+        typeDeclaration: TypeDeclaration,
+        file: String,
+        loc: SourceLocation
+    ) : super(loc) {
+        this.typeDeclaration = typeDeclaration
+        this.anonymousUnit = null
+        this.file = file
+    }
+
+    constructor(
+        anonymousUnit: AnonymousUnit,
+        file: String,
+        loc: SourceLocation
+    ) : super(loc) {
+        this.typeDeclaration = null
+        this.anonymousUnit = anonymousUnit
+        this.file = file
+    }
+
+    override fun getChildren(): List<Node> {
+    if (typeDeclaration != null) {
+      return listOf(typeDeclaration)
+    } else if (anonymousUnit != null) {
+      return listOf(anonymousUnit)
+    }
+    return emptyList()
+  }
 }

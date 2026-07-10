@@ -17,6 +17,7 @@
 package com.google.summit.translation
 
 import com.google.common.flogger.FluentLogger
+import com.google.summit.ast.AnonymousUnit
 import com.google.summit.ast.CompilationUnit
 import com.google.summit.ast.Identifier
 import com.google.summit.ast.Node
@@ -120,6 +121,7 @@ class Translate(val file: String, private val tokens: TokenStream) : ApexParserB
         when (tree) {
           is ApexParser.CompilationUnitContext -> visitCompilationUnit(tree)
           is ApexParser.TriggerUnitContext -> visitTriggerUnit(tree)
+          is ApexParser.AnonymousUnitContext -> visitAnonymousUnit(tree)
           else -> throw IllegalArgumentException("Unexpected parse tree")
         }
       val newNodeCount = Node.totalCount - prevNodeCount
@@ -156,6 +158,49 @@ class Translate(val file: String, private val tokens: TokenStream) : ApexParserB
   /** Translates the 'compilationUnit' grammar rule and returns an AST [CompilationUnit]. */
   override fun visitCompilationUnit(ctx: ApexParser.CompilationUnitContext): CompilationUnit =
     CompilationUnit(visitTypeDeclaration(ctx.typeDeclaration()), file, toSourceLocation(ctx))
+
+  /** Translates the 'anonymousUnit' grammar rule and returns an AST [CompilationUnit]. */
+  override fun visitAnonymousUnit(ctx: ApexParser.AnonymousUnitContext): CompilationUnit =
+    CompilationUnit(visitAnonymousBlock(ctx.anonymousBlock()), file, toSourceLocation(ctx))
+
+  override fun visitAnonymousBlock(ctx: ApexParser.AnonymousBlockContext): AnonymousUnit =
+    AnonymousUnit(toSourceLocation(ctx), ctx.anonymousBlockMember().mapNotNull { visitAnonymousBlockMember(it) })
+
+  override fun visitAnonymousBlockMember(ctx: ApexParser.AnonymousBlockMemberContext): Node? {
+    matchExactlyOne(ruleBeingChecked = ctx, ctx.anonymousMemberDeclaration(), ctx.statement())
+
+    return when {
+      ctx.anonymousMemberDeclaration() != null -> {
+        val member = visitAnonymousMemberDeclaration(ctx.anonymousMemberDeclaration())
+        (member as HasModifiers).modifiers = ctx.modifier().map { visitModifier(it) }
+        member
+      }
+      ctx.statement() != null -> visitStatement(ctx.statement())
+      else -> throw TranslationException(ctx, "Unreachable case reached")
+    }
+  }
+
+  override fun visitAnonymousMemberDeclaration(ctx: ApexParser.AnonymousMemberDeclarationContext): Node {
+    matchExactlyOne(
+      ruleBeingChecked = ctx,
+      ctx.methodDeclaration(),
+      ctx.interfaceDeclaration(),
+      ctx.classDeclaration(),
+      ctx.enumDeclaration(),
+      ctx.propertyDeclaration(),
+      ctx.fieldDeclaration()
+    )
+
+    return when {
+      ctx.methodDeclaration() != null -> visitMethodDeclaration(ctx.methodDeclaration())
+      ctx.interfaceDeclaration() != null -> visitInterfaceDeclaration(ctx.interfaceDeclaration())
+      ctx.classDeclaration() != null -> visitClassDeclaration(ctx.classDeclaration())
+      ctx.enumDeclaration() != null -> visitEnumDeclaration(ctx.enumDeclaration())
+      ctx.propertyDeclaration() != null -> visitPropertyDeclaration(ctx.propertyDeclaration())
+      ctx.fieldDeclaration() != null -> visitFieldDeclaration(ctx.fieldDeclaration())
+      else -> throw TranslationException(ctx, "Unreachable case reached")
+    }
+  }
 
   /** Translates the 'triggerUnit' grammar rule and returns an AST [CompilationUnit]. */
   override fun visitTriggerUnit(ctx: ApexParser.TriggerUnitContext): CompilationUnit {
