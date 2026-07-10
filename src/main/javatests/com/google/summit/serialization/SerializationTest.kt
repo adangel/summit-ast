@@ -81,4 +81,16 @@ class SerializationTest {
     val actualJson = ser.serialize(testTree)
     assertThat(actualJson).isEqualTo(expectedJson)
   }
+
+  @Test
+  fun testSerialization_anonymousUnit() {
+    val ser = Serializer(format = true)
+    val expectedJson = readTestFile("AnonymousBlock.json").trimEnd()
+    val testSrc = readTestFile("AnonymousBlock.apex")
+    val testTree = TranslateHelpers.parseAndTranslateWithExceptions(testSrc, "anonymousBlock")
+
+    val actualJson = ser.serialize(testTree)
+
+    assertThat(actualJson).isEqualTo(expectedJson)
+  }
 }

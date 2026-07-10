@@ -39,7 +39,7 @@ class AnonymousUnitTest {
 
     @Test
     fun empty() {
-        val cu = TranslateHelpers.parseAndTranslateWithExceptions("", "anonymousUnit")
+        val cu = TranslateHelpers.parseAndTranslateWithExceptions("", "anonymousBlock")
 
         assertThat(cu.typeDeclaration).isNull()
         assertThat(cu.anonymousUnit).isInstanceOf(AnonymousUnit::class.java)
@@ -47,7 +47,7 @@ class AnonymousUnitTest {
 
     @Test
     fun statement() {
-        val cu = TranslateHelpers.parseAndTranslateWithExceptions("System.debug('');", "anonymousUnit")
+        val cu = TranslateHelpers.parseAndTranslateWithExceptions("System.debug('');", "anonymousBlock")
 
         assertThat(cu.typeDeclaration).isNull()
         assertThat(cu.anonymousUnit).isInstanceOf(AnonymousUnit::class.java)
@@ -56,7 +56,7 @@ class AnonymousUnitTest {
 
     @Test
     fun method() {
-        val cu = TranslateHelpers.parseAndTranslateWithExceptions("public void func() {}", "anonymousUnit")
+        val cu = TranslateHelpers.parseAndTranslateWithExceptions("public void func() {}", "anonymousBlock")
 
         assertThat(cu.typeDeclaration).isNull()
         assertThat(cu.anonymousUnit).isInstanceOf(AnonymousUnit::class.java)
