@@ -74,7 +74,7 @@ class SoqlAndSoslTest {
          Contact,
          Opportunity,
          Lead
-      //WITH DIVISION =:myString4 // that's not supported by apex-parser yet
+      WITH DIVISION = :myString4
       WITH DIVISION = 'ccc'
       LIMIT :myInt5
     """.trimIndent()
@@ -84,14 +84,14 @@ class SoqlAndSoslTest {
     val node = TranslateHelpers.findFirstNodeOfType<SoslExpression>(root)
     assertThat(node).isNotNull()
     assertThat(node!!.query).isEqualTo(query)
-    assertThat(node.bindings).hasSize(4)
+    assertThat(node.bindings).hasSize(5)
     val varExpressions = node.bindings
         .flatMap { it.getChildren() }
         .filterIsInstance<VariableExpression>()
         .map { it.id.string }
         .toList()
-    assertThat(varExpressions).hasSize(4)
-    assertThat(varExpressions).containsExactly("myString1", "myString2", "myInt3", "myInt5")
+    assertThat(varExpressions).hasSize(5)
+    assertThat(varExpressions).containsExactly("myString1", "myString2", "myInt3", "myString4", "myInt5")
   }
 
   @Test
@@ -131,5 +131,22 @@ class SoqlAndSoslTest {
       val node = TranslateHelpers.findFirstNodeOfType<SoqlExpression>(root)
       assertThat(node).isNotNull()
       assertThat(node!!.query).isEqualTo(query)
+  }
+
+  @Test
+  fun bindVarsInDivisionClauseSosl() {
+    val query = "FIND :q IN ALL FIELDS RETURNING Account WITH DIVISION = :d LIMIT :l"
+    val root = parseSoqlOrSoslInCode(query)
+    val node = TranslateHelpers.findFirstNodeOfType<SoslExpression>(root)
+    assertThat(node).isNotNull()
+    assertThat(node!!.query).isEqualTo(query)
+    assertThat(node.bindings).hasSize(3)
+    val varExpressions = node.bindings
+      .flatMap { it.getChildren() }
+      .filterIsInstance<VariableExpression>()
+      .map { it.id.string }
+      .toList()
+    assertThat(varExpressions).hasSize(3)
+    assertThat(varExpressions).containsExactly("q", "d", "l")
   }
 }

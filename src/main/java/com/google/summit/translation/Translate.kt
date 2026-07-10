@@ -1735,6 +1735,7 @@ class Translate(val file: String, private val tokens: TokenStream) : ApexParserB
   /** Translates the 'soslWithClause' grammar rule and returns a [SoqlFragment]. */
   override fun visitSoslWithClause(ctx: ApexParser.SoslWithClauseContext): SoqlFragment =
     SoqlFragment.mergeOf(
+      ctx.boundExpression()?.let { SoqlFragment(visitBoundExpression(it)) },
       ctx.filteringExpression()?.let { visitFilteringExpression(it) },
       ctx.networkList()?.let { visitNetworkList(it) },
     )
