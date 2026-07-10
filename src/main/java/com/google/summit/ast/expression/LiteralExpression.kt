@@ -35,9 +35,10 @@ sealed class LiteralExpression(loc: SourceLocation) : Expression(loc), Printable
    * A string literal.
    *
    * @property value the string value
+   * @property multiline if the string value was notated as a multiline literal
    * @param loc the location in the source file
    */
-  class StringVal(val value: String, loc: SourceLocation) : LiteralExpression(loc) {
+  class StringVal(val value: String, loc: SourceLocation, val multiline: Boolean = false) : LiteralExpression(loc) {
     override fun asCodeString(): String = "'$value'"
   }
 

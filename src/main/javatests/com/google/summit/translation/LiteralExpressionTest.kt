@@ -106,6 +106,7 @@ class LiteralExpressionTest {
     val node = TranslateHelpers.parseAndFindFirstNodeOfType<LiteralExpression.StringVal>(code)
 
     assertNotNull(node)
+    assertThat(node.multiline).isFalse()
     assertWithMessage("The value should be the string without quotes")
       .that(node.value)
       .isEqualTo("hello")
@@ -119,5 +120,14 @@ class LiteralExpressionTest {
       "Translation failed on 999999999999999 because Literal '999999999999999' format is incorrect",
       { TranslateHelpers.parseAndTranslateWithExceptions(code) }
     )
+  }
+
+  @Test
+  fun multilineString_translation_isStringLiteralWithValue() {
+    val code = createCompilationUnitCodeUsingExpression("'''\nhello\nworld'''")
+    val node = TranslateHelpers.parseAndFindFirstNodeOfType<LiteralExpression.StringVal>(code)
+    assertNotNull(node)
+    assertThat(node.multiline).isTrue()
+    assertThat(node.value).isEqualTo("hello\nworld")
   }
 }

@@ -747,6 +747,7 @@ class Translate(val file: String, private val tokens: TokenStream) : ApexParserB
       ctx.LongLiteral(),
       ctx.NumberLiteral(),
       ctx.StringLiteral(),
+      ctx.MultilineStringLiteral(),
       ctx.BooleanLiteral(),
       ctx.NULL()
     )
@@ -772,6 +773,8 @@ class Translate(val file: String, private val tokens: TokenStream) : ApexParserB
         // Trim single quotes
         ctx.StringLiteral() != null ->
           LiteralExpression.StringVal(text.removeSurrounding("'", "'"), loc)
+        ctx.MultilineStringLiteral() != null ->
+          LiteralExpression.StringVal(text.removeSurrounding("'''\n", "'''"), loc, multiline = true)
         ctx.BooleanLiteral() != null -> LiteralExpression.BooleanVal(text.toBoolean(), loc)
         ctx.NULL() != null -> LiteralExpression.NullVal(loc)
         else -> throw TranslationException(ctx, "Unreachable case reached")
@@ -996,7 +999,7 @@ class Translate(val file: String, private val tokens: TokenStream) : ApexParserB
         ctx.StringLiteral() != null ->
           LiteralExpression.StringVal(text.removeSurrounding("'", "'"), loc)
         ctx.MultilineStringLiteral() != null ->
-          LiteralExpression.StringVal(text.removeSurrounding("'''", "'''"), loc)
+          LiteralExpression.StringVal(text.removeSurrounding("'''\n", "'''"), loc, multiline = true)
         ctx.NULL() != null -> LiteralExpression.NullVal(loc)
         // An identifier is an enum value
         ctx.qualifiedName() != null ->
