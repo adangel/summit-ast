@@ -30,22 +30,11 @@ All dependencies are downloaded and managed through the build system.
 
 ## Build
 
-This software is built using [bazel](https://bazel.build/).
+This software is built using [Apache Maven](https://maven.apache.org/).
 
 ```
-$ bazel build ...
-$ bazel test ...
-```
-
-It is tested and working with the version listed in the `.bazelversion` file.
-
-If you use [Bazelisk to use
-Bazel](https://bazel.build/install/bazelisk), it will download the
-correct version.  Bazelisk can be installed (e.g. for amd64) via:
-```
-$ wget https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64
-$ chmod a+x bazelisk-linux-amd64
-$ ln -s bazelisk-linux-amd64 bazel
+$ ./mvnw compile
+$ ./mvnw test
 ```
 
 ## Running
@@ -58,7 +47,7 @@ files, builds the AST, and prints basic information. It can be executed by
 running:
 
 ```
-$ bazel run :SummitTool -- [-json] [files | directories ...]
+$ ./mvnw compile exec:java -Dexec.mainClass="com.google.summit.SummitTool" -Dexec.args="[-json] [files | directories ...]"
 ```
 
 Any directories will be recursively walked. The tool attempts to compile any
