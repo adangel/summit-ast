@@ -28,19 +28,14 @@ jobs:
     # the rest of the steps
     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 #v7.0.0
 
-    # Caches and restores the bazel build directory.
-    - name: Cache bazel build results
-      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 #v6.1.0
-      env:
-        cache-name: bazel-cache
+    - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 #v5.7.0
       with:
-        path: ~/.cache/bazel
-        key: ${{ runner.os }}-${{ env.cache-name }}-${{ github.ref }}
-        restore-keys: |
-          ${{ runner.os }}-${{ env.cache-name }}-master
+        distribution: temurin
+        java-version: '17'
+        cache: maven
 
     - name: Build the code
-      run: bazel build ...
+      run: ./mvnw compile
 
     - name: Test the code
-      run: bazel test --test_output=errors ...
+      run: ./mvnw verify
