@@ -26,8 +26,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
+import java.util.stream.Collectors
 import java.util.stream.Stream
-import kotlin.streams.toList
 
 /**
  * This is a simple command line tool to parse and translate Apex source files.
@@ -63,22 +63,17 @@ object SummitTool {
     for (arg in filesOrDirectories) {
       logger.atInfo().log("Searching for Apex source at: %s", arg)
 
-      // bazel changes the current working directory...
-      var absolutePath = Paths.get(arg);
-      val workingDirectory = System.getenv("BUILD_WORKING_DIRECTORY")
-      if (!absolutePath.isAbsolute && workingDirectory != null) {
-        absolutePath = Paths.get(workingDirectory).resolve(absolutePath);
-      }
+      val path = Paths.get(arg);
 
       try {
         val stream: Stream<Path> =
           Files.find(
-            absolutePath,
+            path,
             Integer.MAX_VALUE,
             { path, _ -> SummitAST.isApexSourceFile(path) }
           )
 
-        val paths = stream.toList()
+        val paths = stream.collect(Collectors.toList())
         val allAsts = paths.mapNotNull { path ->
           numFiles++
           var compilationUnit : CompilationUnit? = null
