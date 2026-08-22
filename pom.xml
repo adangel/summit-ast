@@ -33,46 +33,37 @@
         <kotlin.compiler.incremental>false</kotlin.compiler.incremental>
     </properties>
 
+    <!-- Versions of transitive dependencies are pinned here, so that they don't
+         float with whatever our direct dependencies happen to declare. These are
+         not direct dependencies, so they must not be listed in <dependencies>. -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.errorprone</groupId>
+                <artifactId>error_prone_annotations</artifactId>
+                <version>2.50.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jspecify</groupId>
+                <artifactId>jspecify</artifactId>
+                <version>1.0.1</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
-        <dependency>
-            <groupId>com.google.errorprone</groupId>
-            <artifactId>error_prone_annotations</artifactId>
-            <version>2.50.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>failureaccess</artifactId>
-            <version>1.0.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>listenablefuture</artifactId>
-            <version>9999.0-empty-to-avoid-conflict-with-guava</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.j2objc</groupId>
-            <artifactId>j2objc-annotations</artifactId>
-            <version>3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jspecify</groupId>
-            <artifactId>jspecify</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>33.7.1-jre</version>
-        </dependency>
         <dependency>
             <groupId>com.google.flogger</groupId>
             <artifactId>flogger</artifactId>
             <version>0.9</version>
         </dependency>
+        <!-- Provides the DefaultPlatform that flogger looks up at runtime. Not
+             referenced at compile time, hence runtime scope. -->
         <dependency>
             <groupId>com.google.flogger</groupId>
             <artifactId>flogger-system-backend</artifactId>
             <version>0.9</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.antlr</groupId>
@@ -90,11 +81,6 @@
             <version>2.14.0</version>
         </dependency>
         <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>jsr250-api</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.danilopianini</groupId>
             <artifactId>gson-extras</artifactId>
             <version>3.3.0</version>
@@ -109,10 +95,13 @@
             <artifactId>kotlin-stdlib</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
+        <!-- Needed by the serializer, which uses full Kotlin reflection at runtime.
+             Nothing compiles against it, hence runtime scope. -->
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-reflect</artifactId>
             <version>${kotlin.version}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
