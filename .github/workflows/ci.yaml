@@ -17,7 +17,10 @@
 
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
 
 # if another commit is added to the same branch or PR (same github.ref),
 # then cancel already running jobs and start a new build.
