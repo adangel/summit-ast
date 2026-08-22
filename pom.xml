@@ -180,6 +180,16 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.4.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>3.6.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
                     <version>3.1.4</version>
                 </plugin>
@@ -204,10 +214,13 @@
                     <version>3.6.1</version>
                 </plugin>
 
-                <!-- Not used yet: there are no Java sources to document, and the Kotlin
-                     sources would need Dokka. Pinned and pre-configured anyway, so that
-                     enabling it later produces reproducible output. Note that javadoc
-                     output also varies with the JDK version, which the enforcer pins. -->
+                <!-- Maven Central requires a javadoc artifact. The Kotlin sources are not
+                     documented, that would need Dokka - the only Java sources are
+                     src/main/java/com/google/summit/{package-info,Javadoc}.java, which
+                     exist solely so that the javadoc jar isn't empty (javadoc refuses to
+                     run without at least one public class). The configuration below keeps
+                     the generated output reproducible. Note that javadoc output also
+                     varies with the JDK version, which the enforcer pins. -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
@@ -342,6 +355,60 @@
                         <phase>test-compile</phase>
                         <goals>
                             <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- kotlin-maven-plugin reads src/main/kotlin, but doesn't register it as
+                 a source root of the project. Without this, the sources artifact created
+                 below would only contain the Java sources. -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-kotlin-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.basedir}/src/main/kotlin</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Maven Central requires sources and javadoc artifacts. Both are built
+                 on every run, so that the reproducibility check (artifact:compare)
+                 covers them as well. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <!-- "jar-no-fork" instead of "jar", to avoid running the
+                                 generate-sources phase a second time. -->
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
