@@ -65,14 +65,4 @@ sealed class ElementValue(loc: SourceLocation) : NodeWithSourceLocation(loc) {
   class ExpressionValue(val value: Expression, loc: SourceLocation) : ElementValue(loc) {
     override fun getChildren(): List<Node> = listOf(value)
   }
-
-  /** An element value that is an [AnnotationModifier]. */
-  class AnnotationValue(val value: AnnotationModifier, loc: SourceLocation) : ElementValue(loc) {
-    override fun getChildren(): List<Node> = listOf(value)
-  }
-
-  /** An element value that is an array of [ElementValue]s. */
-  class ArrayValue(val values: List<ElementValue>, loc: SourceLocation) : ElementValue(loc) {
-    override fun getChildren(): List<Node> = values
-  }
 }

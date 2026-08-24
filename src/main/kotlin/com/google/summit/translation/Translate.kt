@@ -333,7 +333,7 @@ class Translate(val file: String, private val tokens: TokenStream) : ApexParserB
     }
 
     return AnnotationModifier(
-      visitQualifiedName(ctx.qualifiedName()),
+      visitId(ctx.id()),
       args =
         when {
           // Named arguments
@@ -366,36 +366,9 @@ class Translate(val file: String, private val tokens: TokenStream) : ApexParserB
 
   /** Translates the 'elementValue' grammar rule and returns an AST [ElementValue]. */
   override fun visitElementValue(ctx: ApexParser.ElementValueContext): ElementValue {
-    matchExactlyOne(
-      ruleBeingChecked = ctx,
-      ctx.expression(),
-      ctx.annotation(),
-      ctx.elementValueArrayInitializer()
-    )
-
     val loc = toSourceLocation(ctx)
-
-    return when {
-      ctx.expression() != null ->
-        ElementValue.ExpressionValue(visitExpression(ctx.expression()), loc)
-      ctx.annotation() != null ->
-        ElementValue.AnnotationValue(visitAnnotation(ctx.annotation()), loc)
-      ctx.elementValueArrayInitializer() != null ->
-        ElementValue.ArrayValue(
-          visitElementValueArrayInitializer(ctx.elementValueArrayInitializer()),
-          loc
-        )
-      else -> throw TranslationException(ctx, "Unreachable case reached")
-    }
+    return ElementValue.ExpressionValue(visitLiteral(ctx.literal()), loc)
   }
-
-  /**
-   * Translates the 'elementValueArrayInitializer' grammar rule and returns an AST [ElementValue]
-   * list.
-   */
-  override fun visitElementValueArrayInitializer(
-    ctx: ApexParser.ElementValueArrayInitializerContext
-  ): List<ElementValue> = ctx.elementValue().map { visitElementValue(it) }
 
   /** Translates the 'qualifiedName' grammar rule and returns an AST [Identifier]. */
   override fun visitQualifiedName(ctx: ApexParser.QualifiedNameContext): Identifier =

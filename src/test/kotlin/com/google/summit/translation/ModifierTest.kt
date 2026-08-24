@@ -102,7 +102,7 @@ class ModifierTest {
         """
           @A(label='X' description='Y' category='Z')
           @B(false)
-          @C({1, 2, 3})
+          @C(a = 1, b = 2, c = 3)
           @D(cacheable=true)
           public class Test { }
         """
@@ -119,8 +119,8 @@ class ModifierTest {
     assertThat(annotationB.args).hasSize(1)
     assertThat(annotationB.args[0].isNameImplicit).isTrue()
 
-    assertThat(annotationC.args).hasSize(1)
-    assertThat(annotationC.args[0].isNameImplicit).isTrue()
+    assertThat(annotationC.args).hasSize(3)
+    assertThat(annotationC.args.none { it.isNameImplicit }).isTrue()
 
     assertThat(annotationD.args).hasSize(1)
     assertThat(annotationD.args[0].isNameImplicit).isFalse()
@@ -131,9 +131,9 @@ class ModifierTest {
     val cu =
       TranslateHelpers.parseAndTranslate(
         """
-          @A(@X)
-          @B({@Y, @Z})
-          @C(a = false, b = {1, 2, 3}, c = @d)
+          @A(false)
+          @B(a = false)
+          @C(a = 1 b = 'b')
           @D
           @E()
           public class Test { }
@@ -147,23 +147,17 @@ class ModifierTest {
     val annotationE = findAnnotationOnClass(cu, "E")!!
 
     assertThat(annotationA.args).hasSize(1)
-    assertThat(annotationA.args[0].value).isInstanceOf(ElementValue.AnnotationValue::class.java)
+    assertThat(annotationA.args[0].value).isInstanceOf(ElementValue.ExpressionValue::class.java)
 
     assertThat(annotationB.args).hasSize(1)
-    assertThat(annotationB.args[0].value).isInstanceOf(ElementValue.ArrayValue::class.java)
-    val annotationB_array = annotationB.args[0].value as ElementValue.ArrayValue
-    assertThat(annotationB_array.values).hasSize(2)
-    annotationB_array.values.forEach {
-      assertThat(it).isInstanceOf(ElementValue.AnnotationValue::class.java)
-    }
+    assertThat(annotationB.args[0].name.asCodeString()).isEqualTo("a")
+    assertThat(annotationB.args[0].value).isInstanceOf(ElementValue.ExpressionValue::class.java)
 
-    assertThat(annotationC.args).hasSize(3)
+    assertThat(annotationC.args).hasSize(2)
     assertThat(annotationC.args[0].name.asCodeString()).isEqualTo("a")
     assertThat(annotationC.args[0].value).isInstanceOf(ElementValue.ExpressionValue::class.java)
     assertThat(annotationC.args[1].name.asCodeString()).isEqualTo("b")
-    assertThat(annotationC.args[1].value).isInstanceOf(ElementValue.ArrayValue::class.java)
-    assertThat(annotationC.args[2].name.asCodeString()).isEqualTo("c")
-    assertThat(annotationC.args[2].value).isInstanceOf(ElementValue.AnnotationValue::class.java)
+    assertThat(annotationC.args[1].value).isInstanceOf(ElementValue.ExpressionValue::class.java)
 
     assertThat(annotationD.args).isEmpty()
 
