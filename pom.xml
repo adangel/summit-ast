@@ -43,7 +43,7 @@
 
     <!-- Nothing is ever uploaded by the build: "deploy" hands the artifacts to njord,
      which stages them locally. The bundle for Maven Central is written from that
-     store and uploaded to the Central Portal by hand - see RELEASING.md. The
+     store and uploaded to the Central Portal by hand - see docs/releasing.md. The
      "-sca" template adds SHA-512 and SHA-256 checksums to the default SHA-1/MD5.
      Snapshots are not published anywhere either, but the snapshotRepository has to
      be here: njord:status fails with a NullPointerException without it. -->
@@ -237,7 +237,7 @@
                      The compare has to be a second, separate invocation: it resolves the
                      reference build from the local repository, so installing and comparing
                      in one command would compare the build against itself. See
-                     RELEASING.md. -->
+                     docs/releasing.md. -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-artifact-plugin</artifactId>
@@ -268,7 +268,7 @@
                     </configuration>
                 </plugin>
 
-                <!-- Used when releasing, see RELEASING.md. -->
+                <!-- Used when releasing, see docs/releasing.md. -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>

@@ -37,7 +37,7 @@ $ ./mvnw compile
 $ ./mvnw test
 ```
 
-See [RELEASING.md](RELEASING.md) for how a new release is created and published to
+See [docs/releasing.md](docs/releasing.md) for how a new release is created and published to
 Maven Central.
 
 ## Running

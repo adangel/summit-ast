@@ -188,7 +188,7 @@ problem, drop the store, and stage again.
 Then
 
 * create a GitHub release for the `release/X.Y.Z` tag, and
-* update the version in the usage snippet in [README.md](README.md).
+* update the version in the usage snippet in [README.md](../README.md).
 
 ## If something goes wrong
 
