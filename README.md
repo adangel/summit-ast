@@ -16,7 +16,7 @@ Maven coordinates (from version 3.0.0+):
 <dependency>
     <groupId>com.github.adangel</groupId>
     <artifactId>summit-ast</artifactId>
-    <version>3.0.0</version>
+    <version>3.1.0</version>
 </dependency>
 ```
 
