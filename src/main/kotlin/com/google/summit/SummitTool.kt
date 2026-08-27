@@ -16,7 +16,6 @@
 
 package com.google.summit
 
-import com.google.common.flogger.FluentLogger
 import com.google.summit.ast.CompilationUnit
 import com.google.summit.serialization.Serializer
 import com.google.summit.symbols.SummitResolver
@@ -28,6 +27,7 @@ import java.nio.file.Paths
 import java.util.*
 import java.util.stream.Collectors
 import java.util.stream.Stream
+import org.slf4j.LoggerFactory
 
 /**
  * This is a simple command line tool to parse and translate Apex source files.
@@ -39,15 +39,15 @@ import java.util.stream.Stream
  * as JSON to a file.
  */
 object SummitTool {
-  private val logger = FluentLogger.forEnclosingClass()
+  private val logger = LoggerFactory.getLogger(SummitTool::class.java)
 
   // TODO: it'll be useful to have this support flags.
   @JvmStatic
   fun main(args: Array<String>) {
-    // TODO: using a `FluentLogger` here (in this class specifically) does not seem like
+    // TODO: using a logger here (in this class specifically) does not seem like
     //   the right thing to do.
-    logger.atInfo().log("Summit AST Tool")
-    logger.atInfo().log("Usage: SummitTool [-json] <Apex files or search directories>")
+    logger.info("Summit AST Tool")
+    logger.info("Usage: SummitTool [-json] <Apex files or search directories>")
 
     var numFiles = 0
     var numFailures = 0
@@ -55,13 +55,13 @@ object SummitTool {
     var filesOrDirectories : List<String> = args.toList()
 
     if (args.firstOrNull() == "-json") {
-      logger.atInfo().log("Serializing parsed Apex sources to JSON")
+      logger.info("Serializing parsed Apex sources to JSON")
       serializer = Serializer(true)
       filesOrDirectories = args.drop(1)
     }
 
     for (arg in filesOrDirectories) {
-      logger.atInfo().log("Searching for Apex source at: %s", arg)
+      logger.info("Searching for Apex source at: {}", arg)
 
       val inputPath = Paths.get(arg);
 
@@ -85,10 +85,10 @@ object SummitTool {
               val json = serializer.serialize(compilationUnit)
               val jsonFile = path.resolveSibling(path.fileName.toString() + ".json")
               Files.write(jsonFile, Collections.singleton(json), StandardCharsets.UTF_8)
-              logger.atInfo().log("Serialized into %s", jsonFile)
+              logger.info("Serialized into {}", jsonFile)
             }
           } catch (e: SummitAST.ParseException) {
-            logger.atWarning().withCause(e).log("Couldn't parse %s", path)
+            logger.warn("Couldn't parse {}", path, e)
           }
 
           compilationUnit
@@ -96,11 +96,11 @@ object SummitTool {
         SummitResolver().resolve(allAsts)
         numFailures = numFiles - allAsts.size
       } catch (e: IOException) {
-        logger.atWarning().withCause(e).log("Invalid path %s", arg)
+        logger.warn("Invalid path {}", arg, e)
       }
     }
 
-    logger.atInfo().log("Found %d Apex source files", numFiles)
-    logger.atInfo().log("Failed to build AST for %d files", numFailures)
+    logger.info("Found {} Apex source files", numFiles)
+    logger.info("Failed to build AST for {} files", numFailures)
   }
 }
