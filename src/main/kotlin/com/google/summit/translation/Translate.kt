@@ -135,10 +135,10 @@ class Translate(val file: String, private val tokens: TokenStream) : ApexParserB
             .replace("\n", " ")
         )
       }
-      logger.info("Translated {} successfully. Created {} nodes.", file, newNodeCount)
+      logger.debug("Translated {} successfully. Created {} nodes.", file, newNodeCount)
       return cu
     } catch (e: Exception) {
-      logger.info("Failed to translate {}.", file)
+      logger.error("Failed to translate {}.", file)
       throw e
     }
   }
