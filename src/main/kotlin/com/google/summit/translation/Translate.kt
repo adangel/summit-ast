@@ -16,7 +16,6 @@
 
 package com.google.summit.translation
 
-import com.google.common.flogger.FluentLogger
 import com.google.summit.ast.AnonymousUnit
 import com.google.summit.ast.CompilationUnit
 import com.google.summit.ast.Identifier
@@ -90,6 +89,7 @@ import org.antlr.v4.runtime.TokenStream
 import org.antlr.v4.runtime.misc.Interval
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.SyntaxTree
+import org.slf4j.LoggerFactory
 import java.math.BigDecimal
 
 /**
@@ -135,10 +135,10 @@ class Translate(val file: String, private val tokens: TokenStream) : ApexParserB
             .replace("\n", " ")
         )
       }
-      logger.atInfo().log("Translated %s successfully. Created %d nodes.", file, newNodeCount)
+      logger.info("Translated {} successfully. Created {} nodes.", file, newNodeCount)
       return cu
     } catch (e: Exception) {
-      logger.atInfo().log("Failed to translate %s.", file)
+      logger.info("Failed to translate {}.", file)
       throw e
     }
   }
@@ -2043,6 +2043,6 @@ class Translate(val file: String, private val tokens: TokenStream) : ApexParserB
   }
 
     private companion object {
-    val logger = FluentLogger.forEnclosingClass()
+    val logger = LoggerFactory.getLogger(Translate::class.java)
   }
 }

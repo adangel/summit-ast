@@ -30,6 +30,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.release>8</maven.compiler.release>
         <kotlin.version>1.9.0</kotlin.version>
+        <!-- The api and the test binding have to stay on the same version. -->
+        <slf4j.version>1.7.36</slf4j.version>
         <!-- Incremental compilation carries state across builds, so the output could
              depend on what was compiled before. Reproducible builds are full builds. -->
         <kotlin.compiler.incremental>false</kotlin.compiler.incremental>
@@ -77,18 +79,17 @@
     </dependencyManagement>
 
     <dependencies>
+        <!-- The logging facade only. No binding is declared outside of test scope: a
+             library must leave the choice of a backend to the application that embeds it.
+             Stay on the 1.7 line - a 1.7 binding is found through
+             org.slf4j.impl.StaticLoggerBinder, while slf4j-api 2.x instead looks up an
+             org.slf4j.spi.SLF4JServiceProvider via ServiceLoader. PMD, which embeds this
+             library, is on 1.7.36, and an slf4j-api 2.x here would leave its binding
+             undiscovered and log nothing at all. -->
         <dependency>
-            <groupId>com.google.flogger</groupId>
-            <artifactId>flogger</artifactId>
-            <version>0.9</version>
-        </dependency>
-        <!-- Provides the DefaultPlatform that flogger looks up at runtime. Not
-             referenced at compile time, hence runtime scope. -->
-        <dependency>
-            <groupId>com.google.flogger</groupId>
-            <artifactId>flogger-system-backend</artifactId>
-            <version>0.9</version>
-            <scope>runtime</scope>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.antlr</groupId>
@@ -145,6 +146,14 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test</artifactId>
             <version>${kotlin.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- A binding, so that the log output of the library is actually visible while
+             testing and while running SummitTool - see the exec-maven-plugin below. -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -228,6 +237,19 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>3.12.1</version>
+                </plugin>
+
+                <!-- Not bound to the lifecycle; invoked from the command line to run the
+                     SummitTool demonstration executable, see README.md. The only SLF4J
+                     binding in this build is test-scoped, so the tool needs the test
+                     classpath to produce any output at all. -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>3.6.3</version>
+                    <configuration>
+                        <classpathScope>test</classpathScope>
+                    </configuration>
                 </plugin>
 
                 <!-- Not bound to the lifecycle; invoked from the command line to verify
