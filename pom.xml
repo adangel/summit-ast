@@ -11,7 +11,7 @@
         </license>
     </licenses>
     <scm>
-        <connection>https://github.com/adangel/summit-ast.git</connection>
+        <connection>scm:git:ssh://git@github.com/adangel/summit-ast.git</connection>
         <!-- maven-release-plugin pushes to this URL, not to any configured git remote. -->
         <developerConnection>scm:git:ssh://git@github.com/adangel/summit-ast.git</developerConnection>
         <tag>HEAD</tag>
