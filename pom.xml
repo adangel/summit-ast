@@ -14,18 +14,18 @@
         <connection>scm:git:ssh://git@github.com/adangel/summit-ast.git</connection>
         <!-- maven-release-plugin pushes to this URL, not to any configured git remote. -->
         <developerConnection>scm:git:ssh://git@github.com/adangel/summit-ast.git</developerConnection>
-        <tag>release/3.1.0</tag>
+        <tag>HEAD</tag>
         <url>https://github.com/adangel/summit-ast.git</url>
     </scm>
     <groupId>com.github.adangel</groupId>
     <artifactId>summit-ast</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.1-SNAPSHOT</version>
 
     <properties>
         <!-- Reproducible builds: maven-release-plugin sets this to the release date
              while it rewrites the versions, so it needs no manual bumping.
              See https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
-        <project.build.outputTimestamp>2026-08-27T14:50:32Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2026-08-27T14:52:28Z</project.build.outputTimestamp>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.release>8</maven.compiler.release>
