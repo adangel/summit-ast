@@ -233,7 +233,11 @@
                 <!-- Not bound to the lifecycle; invoked from the command line to verify
                      that the build is reproducible:
                        ./mvnw artifact:check-buildplan
-                       ./mvnw clean verify artifact:compare -->
+                       ./mvnw clean install && ./mvnw clean verify artifact:compare
+                     The compare has to be a second, separate invocation: it resolves the
+                     reference build from the local repository, so installing and comparing
+                     in one command would compare the build against itself. See
+                     RELEASING.md. -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-artifact-plugin</artifactId>

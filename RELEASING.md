@@ -61,11 +61,41 @@ gpg --verify target/summit-ast-*-SNAPSHOT.jar.asc target/summit-ast-*-SNAPSHOT.j
 ```bash
 ./mvnw clean verify
 ./mvnw artifact:check-buildplan
+```
+
+`check-buildplan` inspects the plugins in the build plan for known reproducibility
+problems; it needs no reference build.
+
+Comparing the actual output against a reference build takes two **separate** invocations -
+the first one installs the reference into the local repository, the second rebuilds from
+scratch and compares against it:
+
+```bash
+./mvnw clean install
 ./mvnw clean verify artifact:compare
 ```
 
-The last two verify that the build is still reproducible. Run them without `-Psign`:
-signatures are not reproducible and are not part of the comparison.
+`artifact:compare` reads the current output from `target/`, which `package` has already
+produced, and resolves the reference through normal artifact resolution - which looks in
+the local repository first. Hence the split: `./mvnw clean install artifact:compare` as a
+single command would compare the build against the copy it had just installed and always
+report a match. For the same reason the `clean install` has to be run fresh - a stale
+`X.Y.Z-SNAPSHOT` left in `~/.m2` by an earlier commit shows up as differences that have
+nothing to do with reproducibility.
+
+Run all of this without `-Psign`: signatures are not reproducible and are not part of the
+comparison.
+
+Both builds run on the same machine here, so this catches nondeterministic timestamps and
+ordering, but not output that varies with the JDK or the operating system. Once a version
+is published, the stronger check is to rebuild its tag and compare against Maven Central
+(`reference.repo` defaults to `central`; the version must not already be in the local
+repository, which would take precedence):
+
+```bash
+git checkout release/X.Y.Z
+./mvnw clean verify artifact:compare
+```
 
 ## 2. Prepare the release
 
