@@ -1,6 +1,6 @@
 @A
 @B(false)
-@C({@D, @E})
+// @C({@D, @E}) // this is invalid Apex. Since apex-parser 5.2.0, this produces a syntax error
 public class Main implements I, J {
   enum E { A, B, C }
   integer field;

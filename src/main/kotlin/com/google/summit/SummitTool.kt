@@ -63,12 +63,12 @@ object SummitTool {
     for (arg in filesOrDirectories) {
       logger.atInfo().log("Searching for Apex source at: %s", arg)
 
-      val path = Paths.get(arg);
+      val inputPath = Paths.get(arg);
 
       try {
         val stream: Stream<Path> =
           Files.find(
-            path,
+            inputPath,
             Integer.MAX_VALUE,
             { path, _ -> SummitAST.isApexSourceFile(path) }
           )
