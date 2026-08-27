@@ -11,8 +11,9 @@
         </license>
     </licenses>
     <scm>
-        <connection>https://github.com/adangel/summit-ast.git</connection>
-        <developerConnection>https://github.com/adangel/summit-ast.git</developerConnection>
+        <connection>scm:git:ssh://git@github.com/adangel/summit-ast.git</connection>
+        <!-- maven-release-plugin pushes to this URL, not to any configured git remote. -->
+        <developerConnection>scm:git:ssh://git@github.com/adangel/summit-ast.git</developerConnection>
         <tag>HEAD</tag>
         <url>https://github.com/adangel/summit-ast.git</url>
     </scm>
@@ -21,7 +22,8 @@
     <version>3.0.2-SNAPSHOT</version>
 
     <properties>
-        <!-- Reproducible builds: bump this to the release date on every release.
+        <!-- Reproducible builds: maven-release-plugin sets this to the release date
+             while it rewrites the versions, so it needs no manual bumping.
              See https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
         <project.build.outputTimestamp>2026-08-22T00:00:00Z</project.build.outputTimestamp>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -31,7 +33,30 @@
         <!-- Incremental compilation carries state across builds, so the output could
              depend on what was compiled before. Reproducible builds are full builds. -->
         <kotlin.compiler.incremental>false</kotlin.compiler.incremental>
+        <!-- The njord extension and the njord plugin must be kept on the same version. -->
+        <version.njord>0.9.10</version.njord>
+        <!-- The publishing service the staged artifacts are destined for. Only used to
+             validate the staged store against its rules (njord:validate) - the upload
+             itself is done by hand, so njord never contacts the service. -->
+        <njord.publisher>sonatype-cp</njord.publisher>
     </properties>
+
+    <!-- Nothing is ever uploaded by the build: "deploy" hands the artifacts to njord,
+     which stages them locally. The bundle for Maven Central is written from that
+     store and uploaded to the Central Portal by hand - see docs/releasing.md. The
+     "-sca" template adds SHA-512 and SHA-256 checksums to the default SHA-1/MD5.
+     Snapshots are not published anywhere either, but the snapshotRepository has to
+     be here: njord:status fails with a NullPointerException without it. -->
+    <distributionManagement>
+        <repository>
+            <id>njord</id>
+            <url>njord:template:release-sca</url>
+        </repository>
+        <snapshotRepository>
+            <id>njord</id>
+            <url>njord:template:snapshot-sca</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <!-- Versions of transitive dependencies are pinned here, so that they don't
          float with whatever our direct dependencies happen to declare. These are
@@ -125,6 +150,18 @@
     </dependencies>
 
     <build>
+        <!-- Provides the "njord:" transport that distributionManagement above refers to.
+             It has to be here and not in the "sign" profile, as <extensions> is not
+             allowed inside a profile. The extension stays dormant during normal builds,
+             it only registers the transport. -->
+        <extensions>
+            <extension>
+                <groupId>eu.maveniverse.maven.njord</groupId>
+                <artifactId>extension3</artifactId>
+                <version>${version.njord}</version>
+            </extension>
+        </extensions>
+
         <!-- All plugin versions are pinned here, so that the build does not depend on
              the default lifecycle bindings of whichever Maven version happens to run it. -->
         <pluginManagement>
@@ -196,7 +233,11 @@
                 <!-- Not bound to the lifecycle; invoked from the command line to verify
                      that the build is reproducible:
                        ./mvnw artifact:check-buildplan
-                       ./mvnw clean verify artifact:compare -->
+                       ./mvnw clean install && ./mvnw clean verify artifact:compare
+                     The compare has to be a second, separate invocation: it resolves the
+                     reference build from the local repository, so installing and comparing
+                     in one command would compare the build against itself. See
+                     docs/releasing.md. -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-artifact-plugin</artifactId>
@@ -225,6 +266,27 @@
                             <additionalJOption>-J-Duser.country=US</additionalJOption>
                         </additionalJOptions>
                     </configuration>
+                </plugin>
+
+                <!-- Used when releasing, see docs/releasing.md. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>3.3.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>3.2.8</version>
+                </plugin>
+                <!-- Note: the artifactId is "njord", there is no "njord-maven-plugin".
+                     The goal prefix is "njord". Not bound to the lifecycle; invoked from
+                     the command line to inspect the local staging store and to write the
+                     bundle for Maven Central. -->
+                <plugin>
+                    <groupId>eu.maveniverse.maven.plugins</groupId>
+                    <artifactId>njord</artifactId>
+                    <version>${version.njord}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -402,8 +464,79 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Releases are signed and staged locally: release:perform activates the
+                 "sign" profile below in the build it forks off the tag, and the deploy
+                 of that build goes into njord (see distributionManagement above). -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <releaseProfiles>sign</releaseProfiles>
+                    <!-- The existing tags are named release/3.0.1, not summit-ast-3.0.1. -->
+                    <tagNameFormat>release/@{project.version}</tagNameFormat>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!-- Maven Central requires a detached GPG signature for every deployed artifact.
+             Signing is kept out of the normal build: it would ask for a passphrase on
+             every "mvnw verify", and signatures are not reproducible. The profile is
+             activated by the releaseProfiles setting of maven-release-plugin above, or
+             by hand with -Psign. -->
+        <profile>
+            <id>sign</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <!-- Take the passphrase from MAVEN_GPG_PASSPHRASE or from
+                                 gpg-agent only, and fail if it is passed any other way
+                                 (-Dgpg.passphrase or settings.xml). That is what
+                                 maven-gpg-plugin 4.x will enforce unconditionally. -->
+                            <bestPractices>true</bestPractices>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Which key to sign with. The gpg signer has no environment variable of its own
+             for that (MAVEN_GPG_KEY_FINGERPRINT is honored by the "bc" signer only), but
+             Maven exposes every environment variable as a property "env.<NAME>", so it can
+             be forwarded to the signer's own "gpg.keyname" property, which it passes on
+             as the "local-user" option of gpg. Unlike -Dgpg.keyname, an environment
+             variable is inherited by the build that release:perform forks. Without the
+             variable, gpg picks its default key.
+
+             Note that "keyname" is deliberately not configured on the plugin itself: the
+             property alone is enough, and an undefined property would otherwise end up
+             as a literal "${gpg.keyname}" on the gpg command line. -->
+        <profile>
+            <id>sign-key-from-env</id>
+            <activation>
+                <property>
+                    <name>env.MAVEN_GPG_KEY_FINGERPRINT</name>
+                </property>
+            </activation>
+            <properties>
+                <gpg.keyname>${env.MAVEN_GPG_KEY_FINGERPRINT}</gpg.keyname>
+            </properties>
+        </profile>
+    </profiles>
 
     <developers>
         <developer>

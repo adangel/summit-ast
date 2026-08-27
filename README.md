@@ -37,6 +37,9 @@ $ ./mvnw compile
 $ ./mvnw test
 ```
 
+See [docs/releasing.md](docs/releasing.md) for how a new release is created and published to
+Maven Central.
+
 ## Running
 
 The primary output is an in-memory AST data structure. The library is intended
