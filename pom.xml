@@ -36,7 +36,7 @@
              depend on what was compiled before. Reproducible builds are full builds. -->
         <kotlin.compiler.incremental>false</kotlin.compiler.incremental>
         <!-- The njord extension and the njord plugin must be kept on the same version. -->
-        <version.njord>0.9.10</version.njord>
+        <version.njord>0.10.0</version.njord>
         <!-- The publishing service the staged artifacts are destined for. Only used to
              validate the staged store against its rules (njord:validate) - the upload
              itself is done by hand, so njord never contacts the service. -->
